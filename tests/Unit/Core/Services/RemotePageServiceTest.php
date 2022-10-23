@@ -22,20 +22,33 @@ class RemotePageServiceTest extends \Codeception\Test\Unit
      */
     public function testTagsInfo():void
     {
-        $service = $this->service(new MockResponse("
-           <div class='hello_1'>
-              <span>Hello</span>
-              <a href='sss'>Link</a>
-              <div>
-                 <div></div>                     
-              </div>
-           </div>
-           <div class='hello_2'></div>
+        $service = $this->service(new MockResponse("    
+           <html lang='en'>
+                <head>
+                    <meta charset='utf-8'>
+                    <link rel='dns-prefetch' href='https://github.githubassets.com'>
+                </head>
+                <body>
+                   <div class='hello_1'>
+                      <span>Hello</span>
+                      <a href='sss'>Link</a>
+                      <div>
+                         <div></div>                     
+                      </div>
+                   </div>
+                   <div class='hello_2'></div>
+                </body>
+           </html>
         "));
         $request = new Request('http://test.local');
         $response = $service->tagsInfo($request);
         $this->tester->assertTrue($response->isSuccess());
         $this->tester->assertEquals([
+            'html',
+            'head',
+            'meta',
+            'link',
+            'body',
             'div',
             'span',
             'a',
@@ -46,7 +59,7 @@ class RemotePageServiceTest extends \Codeception\Test\Unit
             static fn(Tag $tag) => $tag->getTag(),
             $response->tags->getItems()
         ));
-        $this->tester->assertEquals(6, $response->countTags());
+        $this->tester->assertEquals(11, $response->countTags());
     }
 
     /**
