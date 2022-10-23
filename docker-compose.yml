@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  php-8:
+    container_name: a3f_php
+    build: docker/php
+    volumes:
+      - ./:/var/www

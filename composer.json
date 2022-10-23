@@ -1,0 +1,19 @@
+{
+    "require": {
+        "symfony/console": "^6.0",
+        "symfony/http-client": "^6.0",
+        "webmozart/assert": "^1.11.0"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest",
+        "symfony/var-dumper": "^6.0",
+        "codeception/codeception": "^5.0",
+        "codeception/module-asserts": "^3.0",
+        "codeception/module-phpbrowser": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "A3F\\": "src/"
+        }
+    }
+}
