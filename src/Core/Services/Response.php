@@ -2,6 +2,8 @@
 
 namespace A3F\Core\Services;
 
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Throwable;
 
 /**
@@ -10,11 +12,13 @@ use Throwable;
 class Response
 {
     private bool $isSuccess;
+    private array $validateErrors;
     private array $errors;
 
-    private function __construct(bool $isSuccess, array $errors) {
+    private function __construct(bool $isSuccess, array $errors, array $validateErrors = []) {
         $this->isSuccess = $isSuccess;
         $this->errors = $errors;
+        $this->validateErrors = $validateErrors;
     }
 
     /**
@@ -31,9 +35,23 @@ class Response
     }
 
     /**
+     * @param ConstraintViolationListInterface $errors
+     * @return static
+     */
+    public static function validateErrors(ConstraintViolationListInterface $errors):static {
+        return new static(false,
+            [],
+            [$errors[0]->getMessage()]
+        );
+    }
+
+    /**
      * @return string
      */
     public function getErrorText():string {
+        if ( ! empty($this->validateErrors)) {
+            return implode(". ", $this->validateErrors);
+        }
         return $this->errors['error'];
     }
 

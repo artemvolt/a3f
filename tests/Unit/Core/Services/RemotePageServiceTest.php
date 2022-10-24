@@ -9,11 +9,12 @@ use A3F\Core\Services\RemotePage\RemotePageService;
 use A3F\Core\Services\RemotePage\Request;
 use A3F\Core\Services\RemotePage\transport\DefaultTransport;
 use A3F\Core\Services\RemotePage\transport\WithResponseHandle;
+use Codeception\Test\Unit;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Tests\Support\UnitTester;
 
-class RemotePageServiceTest extends \Codeception\Test\Unit
+class RemotePageServiceTest extends Unit
 {
     protected UnitTester $tester;
 
@@ -72,7 +73,22 @@ class RemotePageServiceTest extends \Codeception\Test\Unit
         $response = $service->tagsInfo($request);
         $this->tester->assertFalse($response->isSuccess());
         $this->tester->assertEquals(
-            "Remote server with another response code: 500. {$errorMessage}",
+            "Remote server with another response code: 500. $errorMessage",
+            $response->getErrorText()
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testTagsInfoWithValidateError():void
+    {
+        $service = $this->service(new MockResponse($errorMessage = 'Wrong with out site', ['http_code' => '500']));
+        $request = new Request('test.local');
+        $response = $service->tagsInfo($request);
+        $this->tester->assertFalse($response->isSuccess());
+        $this->tester->assertEquals(
+            'The url ""test.local"" is not a valid url.',
             $response->getErrorText()
         );
     }
